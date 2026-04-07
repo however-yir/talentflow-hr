@@ -1,252 +1,100 @@
-# TalentFlow HR
+# talentflow-hr - 人力资源管理平台 | Human Resource Management Platform
 
-🔥 A full-stack HR management platform based on Spring Boot + Vue2.  
-🚀 Built with multi-module Java backend, Redis cache, RabbitMQ mail workflow, and role-based admin console.  
-⭐ Covers employee lifecycle, organization governance, salary account configuration, system notifications, and chat.
+项目面向人事业务数字化，覆盖组织、流程与数据管理。
 
-[![Java](https://img.shields.io/badge/Java-8-007396?logo=openjdk)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.4.0-6DB33F?logo=springboot)](https://spring.io/projects/spring-boot)
-[![Vue](https://img.shields.io/badge/Vue-2.x-42b883?logo=vuedotjs)](https://v2.vuejs.org/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)](https://www.mysql.com/)
-[![Redis](https://img.shields.io/badge/Redis-7-red?logo=redis)](https://redis.io/)
-[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3-orange?logo=rabbitmq)](https://www.rabbitmq.com/)
+## 目录
 
----
-
-## Table of Contents
-
-- [1. Project Overview](#1-project-overview)
-- [2. What This Repo Delivers](#2-what-this-repo-delivers)
-- [3. Directory Naming Migration (Complete)](#3-directory-naming-migration-complete)
-- [4. Architecture Overview](#4-architecture-overview)
-- [5. Project Structure](#5-project-structure)
+- [1. 项目概述](#1-项目概述)
+- [2. 目标与场景](#2-目标与场景)
+- [3. 核心能力](#3-核心能力)
+- [4. 技术栈](#4-技术栈)
+- [5. 仓库结构](#5-仓库结构)
 - [6. Quick Start](#6-quick-start)
-- [7. Build & Run Commands](#7-build--run-commands)
-- [8. Configuration Guide](#8-configuration-guide)
-- [9. Roadmap](#9-roadmap)
-- [10. Upstream Attribution](#10-upstream-attribution)
-- [11. License](#11-license)
+- [7. 配置建议](#7-配置建议)
+- [8. 开发与测试](#8-开发与测试)
+- [9. 协作与发布](#9-协作与发布)
+- [10. 路线图](#10-路线图)
+- [11. 贡献指南](#11-贡献指南)
+- [12. License](#12-license)
 
----
+## 1. 项目概述
 
-## 1. Project Overview
+本仓库以工程化可维护为目标，强调文档清晰、结构稳定、可持续迭代。
 
-TalentFlow HR is a rebranded and engineering-hardened fork of the classic `vhr` HR system.
+## 2. 目标与场景
 
-This repository focuses on:
+适用场景：
 
-- product identity unification (`TalentFlow HR`)
-- Java package migration to `io.liuzhuoran.talentflow`
-- multi-module Maven coordinate migration to `talentflow-*`
-- environment-driven configuration for MySQL / Redis / RabbitMQ / SMTP
-- frontend branding and repository-level structure standardization
+- 作为业务功能开发与验证的基础仓库。
+- 作为团队内部协作与知识沉淀的载体。
+- 作为后续扩展和二次开发的起点。
 
----
+## 3. 核心能力
 
-## 2. What This Repo Delivers
+- 支持组织人事基础数据管理。
+- 支持流程审批与业务协同。
+- 支持统计报表与运营分析。
 
-### 2.1 Core business capabilities
+## 4. 技术栈
 
-- employee profile management
-- department / job level / position / role management
-- salary account and employee salary binding
-- role-based menu authorization
-- online chat + notification entry
-- asynchronous onboarding email delivery (RabbitMQ + mail worker)
+- Node.js / JavaScript
+- Java / Spring
+- Docker Compose
 
-### 2.2 Engineering capabilities
+## 5. 仓库结构
 
-- multi-module backend with clear boundaries (`model/mapper/service/web/mailserver`)
-- Flyway migration script included
-- standalone SQL seed script (`talentflow_hr.sql`)
-- environment variable override support for local and deployment environments
+建议优先阅读：
 
----
-
-## 3. Directory Naming Migration (Complete)
-
-All key project directories have been renamed from legacy names to TalentFlow naming.
-
-| Legacy Name | Current Name |
-|---|---|
-| `vhr/` | `talentflow-platform/` |
-| `vhr/vhrserver/` | `talentflow-platform/talentflow-server/` |
-| `vhr/mailserver/` | `talentflow-platform/talentflow-mailserver/` |
-| `vhr/vhrserver/vhr-model/` | `talentflow-platform/talentflow-server/talentflow-model/` |
-| `vhr/vhrserver/vhr-mapper/` | `talentflow-platform/talentflow-server/talentflow-mapper/` |
-| `vhr/vhrserver/vhr-service/` | `talentflow-platform/talentflow-server/talentflow-service/` |
-| `vhr/vhrserver/vhr-web/` | `talentflow-platform/talentflow-server/talentflow-web/` |
-| `vuehr/` | `talentflow-ui/` |
-
----
-
-## 4. Architecture Overview
-
-```mermaid
-flowchart LR
-  U["Admin/HR User"] --> FE["talentflow-ui (Vue2)"]
-  FE --> BE["talentflow-web (Spring Boot API)"]
-  BE --> DB["MySQL (talentflow_hr)"]
-  BE --> R["Redis (cache/session)"]
-  BE --> MQ["RabbitMQ"]
-  MQ --> MS["talentflow-mailserver"]
-  MS --> SMTP["SMTP Provider"]
-```
-
----
-
-## 5. Project Structure
-
-```text
-.
-├── talentflow-platform/
-│   ├── pom.xml                          # Backend aggregator
-│   ├── talentflow-mailserver/           # Mail worker module
-│   └── talentflow-server/
-│       ├── pom.xml                      # Server aggregator
-│       ├── talentflow-model/            # Domain models/constants
-│       ├── talentflow-mapper/           # MyBatis mappers/xml
-│       ├── talentflow-service/          # Core business services
-│       └── talentflow-web/              # API + security + static resources
-├── talentflow-ui/                       # Vue2 frontend
-├── talentflow_hr.sql                    # Full seed SQL (optional import)
-├── .env.example                         # Local env template
-└── docker-compose.yml                   # MySQL/Redis/RabbitMQ local bootstrap
-```
-
----
+- README.md：项目入口与整体说明。
+- docs 或同类目录：架构、规范、部署与 FAQ。
+- 核心源码目录：按模块深入阅读。
 
 ## 6. Quick Start
 
-### 6.1 Requirements
+1. 克隆仓库并进入目录：
 
-- JDK 8+
-- Maven 3.8+
-- Node.js 16+ (recommended)
-- MySQL 8.0+
-- Redis 6+
-- RabbitMQ 3+
+    git clone https://github.com/however-yir/talentflow-hr.git
+    cd talentflow-hr
 
-### 6.2 Start infra quickly (optional)
+2. 安装依赖并启动（按项目类型选择）：
 
-```bash
-docker compose up -d
-```
+请按仓库现有脚本执行安装与启动步骤。
 
-### 6.3 Create and import database
+3. 最小验证建议：
 
-```bash
-mysql -u root -p -e "CREATE DATABASE talentflow_hr CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p talentflow_hr < talentflow_hr.sql
-```
+- 依赖安装成功。
+- 核心流程可运行。
+- 基础测试或检查通过。
 
-### 6.4 Load env values
+## 7. 配置建议
 
-```bash
-set -a
-source .env.example
-set +a
-```
+建议按 dev / staging / prod 分层配置，并将密钥类信息放入环境变量或密钥管理系统。
 
-### 6.5 Build backend
+## 8. 开发与测试
 
-```bash
-cd talentflow-platform
-mvn -ntp clean package
-```
+推荐流程：
 
-### 6.6 Run backend modules
+1. 基于默认分支创建功能分支。
+2. 小步提交并保持提交目标单一。
+3. 本地完成构建与测试后再推送。
+4. 通过 Pull Request 完成评审与合并。
 
-Terminal 1:
+## 9. 协作与发布
 
-```bash
-cd talentflow-platform
-mvn -ntp -pl talentflow-server/talentflow-web spring-boot:run
-```
+建议使用语义化版本，发布说明应包含新增、修复与兼容性说明。
 
-Terminal 2:
+## 10. 路线图
 
-```bash
-cd talentflow-platform
-mvn -ntp -pl talentflow-mailserver spring-boot:run
-```
+建议按以下顺序推进：
 
-### 6.7 Run frontend
+1. 稳定主流程与关键接口。
+2. 优化模块边界与可观测性。
+3. 完善自动化测试与文档体系。
 
-```bash
-cd talentflow-ui
-npm install
-npm run serve
-```
+## 11. 贡献指南
 
-Frontend default: `http://localhost:8080`  
-Backend default: `http://localhost:8081`
+提交建议包含：变更背景、实现说明、验证结果、风险评估。
 
----
+## 12. License
 
-## 7. Build & Run Commands
-
-```bash
-# Backend compile only
-cd talentflow-platform
-mvn -ntp compile
-
-# Backend tests
-cd talentflow-platform
-mvn -ntp test
-
-# Frontend dev
-cd talentflow-ui
-npm run serve
-
-# Frontend production build
-cd talentflow-ui
-npm run build
-```
-
-If you deploy in single-jar mode, copy built frontend assets to:
-
-`talentflow-platform/talentflow-server/talentflow-web/src/main/resources/static/`
-
----
-
-## 8. Configuration Guide
-
-Main backend config:
-
-- `talentflow-platform/talentflow-server/talentflow-web/src/main/resources/application.yml`
-- `talentflow-platform/talentflow-mailserver/src/main/resources/application.properties`
-
-Supported env variables include:
-
-- `TF_DB_*`
-- `TF_REDIS_*`
-- `TF_RABBITMQ_*`
-- `TF_MAIL_*`
-- `TF_SERVER_PORT`
-- `TF_MAIL_SERVER_PORT`
-- `TF_STORAGE_PUBLIC_BASE_URL`
-
-See `.env.example` for a complete baseline.
-
----
-
-## 9. Roadmap
-
-1. Upgrade Java baseline to 17 and align Spring Boot target version.
-2. Migrate frontend from Vue2/Vue CLI to Vue3/Vite.
-3. Add integration tests for auth, employee lifecycle, and mail retry chain.
-4. Remove or regenerate legacy static bundle artifacts under backend `static/`.
-
----
-
-## 10. Upstream Attribution
-
-This project originated from [lenve/vhr](https://github.com/lenve/vhr) and has been structurally and semantically migrated for TalentFlow branding and engineering consistency.  
-Please review upstream licensing obligations before redistribution.
-
----
-
-## 11. License
-
-Apache License 2.0 (same as upstream unless otherwise noted).
+请以仓库内现有 License 文件为准。
