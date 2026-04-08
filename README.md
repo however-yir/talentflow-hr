@@ -23,6 +23,14 @@
 - 最短运行路径：`cd talentflow-platform && mvn -B -DskipTests package`
 - 合规提醒：在补正式 `LICENSE` 之前，请先以 `LICENSE_STATUS.md`、`NOTICE.md` 与上游仓库状态为准。
 
+## Java 全栈作品线分工
+
+| Repo | 主要角色 | 技术侧重 | 最适合的展示点 |
+| --- | --- | --- | --- |
+| `NebulaCMS` | 内容平台 | 插件系统、WebFlux、Vue 3 | 插件生态、内容管理、平台化 |
+| `TalentFlow HR` | 业务后台 | Spring Boot + Vue | 组织流程、人事场景、后台系统 |
+| `Aurora Mall` | 电商系统 | Spring Boot + MyBatis | 商品交易、配置治理、质量门禁 |
+
 ## 目录
 
 - [1. 项目概述](#1-项目概述)
@@ -82,17 +90,24 @@ cd talentflow-hr
 2. 安装依赖并启动（按项目类型选择）：
 
 ```bash
+# Start infra dependencies
+docker compose up -d
+
+# Initialize database schema
+mysql -h 127.0.0.1 -uroot -proot-password talentflow_hr < talentflow_hr.sql
+
 # Backend smoke path
 cd talentflow-platform
 mvn -B -DskipTests package
+mvn -pl talentflow-server/talentflow-web spring-boot:run
 
 # Frontend smoke path
 cd ../talentflow-ui
 npm ci
-npm run build
+npm run serve
 ```
 
-如需本地联调，可在完成以上步骤后继续补充数据库初始化与前后端分别启动命令。
+完成以上步骤后，默认可分别在 `8081` 和 Vue 开发端口观察后端与前端本地联调结果。
 
 3. 最小验证建议：
 
