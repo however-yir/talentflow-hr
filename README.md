@@ -1,6 +1,27 @@
 # talentflow-hr - 人力资源管理平台 | Human Resource Management Platform
 
-项目面向人事业务数字化，覆盖组织、流程与数据管理。
+[![Build](https://github.com/however-yir/talentflow-hr/actions/workflows/talentflow-smoke.yml/badge.svg)](https://github.com/however-yir/talentflow-hr/actions/workflows/talentflow-smoke.yml)
+[![Docs](https://img.shields.io/badge/docs-README-0A7EFA)](https://github.com/however-yir/talentflow-hr#readme)
+[![License](https://img.shields.io/badge/license-pending%20verification-EAB308)](./LICENSE_STATUS.md)
+[![Status](https://img.shields.io/badge/status-showcase--ready-2563EB)](https://github.com/however-yir/talentflow-hr)
+[![Series](https://img.shields.io/badge/series-java%20full--stack-7C3AED)](https://github.com/however-yir/however-yir#project-map)
+
+> Status: `showcase-ready`
+>
+> Upstream origin: `lenve/vhr`
+>
+> License note: upstream repository currently has no detected GitHub license file, so public redistribution should be verified before shipping a formal `LICENSE`.
+
+🔥 面向人事业务数字化的 Spring Boot + Vue 项目，覆盖组织、审批、报表与后台管理。  
+🚀 当前重点是把传统二开仓库升级成“更适合作品集展示与后续工程化迭代”的独立项目。  
+⭐ 适合放在 Java 全栈产品化作品线里，与 `nebulacms`、`aurora-mall` 一起看。
+
+## 项目快照
+
+- 定位：Java 全栈人力资源管理平台。
+- 亮点：组织与流程场景、前后端分离、数据库初始化资源、后续可继续做 CI 与截图展示。
+- 最短运行路径：`cd talentflow-platform && mvn -B -DskipTests package`
+- 合规提醒：在补正式 `LICENSE` 之前，请先以 `LICENSE_STATUS.md`、`NOTICE.md` 与上游仓库状态为准。
 
 ## 目录
 
@@ -53,12 +74,25 @@
 
 1. 克隆仓库并进入目录：
 
-    git clone https://github.com/however-yir/talentflow-hr.git
-    cd talentflow-hr
+```bash
+git clone https://github.com/however-yir/talentflow-hr.git
+cd talentflow-hr
+```
 
 2. 安装依赖并启动（按项目类型选择）：
 
-请按仓库现有脚本执行安装与启动步骤。
+```bash
+# Backend smoke path
+cd talentflow-platform
+mvn -B -DskipTests package
+
+# Frontend smoke path
+cd ../talentflow-ui
+npm ci
+npm run build
+```
+
+如需本地联调，可在完成以上步骤后继续补充数据库初始化与前后端分别启动命令。
 
 3. 最小验证建议：
 

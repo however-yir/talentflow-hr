@@ -1,0 +1,50 @@
+name: talentflow-smoke
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+
+      - name: Backend package
+        working-directory: talentflow-platform
+        run: mvn -B -DskipTests package
+
+  frontend-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: npm
+          cache-dependency-path: talentflow-ui/package-lock.json
+
+      - name: Frontend install
+        working-directory: talentflow-ui
+        run: npm ci
+
+      - name: Frontend build
+        working-directory: talentflow-ui
+        run: npm run build
