@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend-smoke:
+  backend-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +23,11 @@ jobs:
           java-version: '8'
           cache: maven
 
-      - name: Backend package
+      - name: Backend tests
         working-directory: talentflow-platform
-        run: mvn -B -DskipTests package
+        run: mvn -B -pl talentflow-server/talentflow-web -am test
 
-  frontend-smoke:
+  frontend-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,10 +41,8 @@ jobs:
           cache: npm
           cache-dependency-path: talentflow-ui/package-lock.json
 
-      - name: Frontend install
+      - name: Frontend unit tests
         working-directory: talentflow-ui
-        run: npm ci
-
-      - name: Frontend build
-        working-directory: talentflow-ui
-        run: npm run build
+        run: |
+          npm ci
+          npm run test:unit

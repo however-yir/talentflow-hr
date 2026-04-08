@@ -106,6 +106,7 @@ import {putRequest} from "./utils/api";
 import {deleteRequest} from "./utils/api";
 import {getRequest} from "./utils/api";
 import {initMenu} from "./utils/menus";
+import {handleRouteGuard} from "./router/guard";
 import 'font-awesome/css/font-awesome.min.css'
 
 Vue.prototype.postRequest = postRequest;
@@ -117,16 +118,12 @@ Vue.prototype.getRequest = getRequest;
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-    if (to.path == '/') {
-        next();
-    } else {
-        if (window.sessionStorage.getItem("user")) {
-            initMenu(router, store);
-            next();
-        } else {
-            next('/?redirect=' + to.path);
-        }
-    }
+    handleRouteGuard(to, next, {
+        sessionStorage: window.sessionStorage,
+        initMenu,
+        router,
+        store
+    });
 })
 
 new Vue({
