@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/however-yir/talentflow-hr/actions/workflows/talentflow-smoke.yml/badge.svg)](https://github.com/however-yir/talentflow-hr/actions/workflows/talentflow-smoke.yml)
 [![Docs](https://img.shields.io/badge/docs-README-0A7EFA)](https://github.com/however-yir/talentflow-hr#readme)
-[![License](https://img.shields.io/badge/license-pending%20verification-EAB308)](./LICENSE_STATUS.md)
+[![License](https://img.shields.io/badge/license-scoped%20notice-EAB308)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-showcase--ready-2563EB)](https://github.com/however-yir/talentflow-hr)
 [![Series](https://img.shields.io/badge/series-java%20full--stack-7C3AED)](https://github.com/however-yir/however-yir#project-map)
 
@@ -10,18 +10,22 @@
 >
 > Upstream origin: `lenve/vhr`
 >
-> License note: upstream repository currently has no detected GitHub license file, so public redistribution should be verified before shipping a formal `LICENSE`.
+> License note: upstream repository currently has no detected GitHub license file, so this fork ships a scoped `LICENSE` notice for fork-authored documentation and showcase assets only.
+>
+> Attribution: see `LICENSE`, `LICENSE.HOWEVER`, `NOTICE.md`, and `LICENSE_STATUS.md` for redistribution boundaries and current verification status.
 
 🔥 面向人事业务数字化的 Spring Boot + Vue 项目，覆盖组织、审批、报表与后台管理。  
 🚀 当前重点是把传统二开仓库升级成“更适合作品集展示与后续工程化迭代”的独立项目。  
 ⭐ 适合放在 Java 全栈产品化作品线里，与 `nebulacms`、`aurora-mall` 一起看。
 
+![TalentFlow HR showcase cover](docs/showcase/portfolio-cover.svg)
+
 ## 项目快照
 
 - 定位：Java 全栈人力资源管理平台。
-- 亮点：组织与流程场景、前后端分离、数据库初始化资源、后续可继续做 CI 与截图展示。
+- 亮点：组织与流程场景、前后端分离、数据库初始化资源、范围受限的正式 LICENSE、后续可继续做 CI 与截图展示。
 - 最短运行路径：`cd talentflow-platform && mvn -B -DskipTests package`
-- 合规提醒：在补正式 `LICENSE` 之前，请先以 `LICENSE_STATUS.md`、`NOTICE.md` 与上游仓库状态为准。
+- 合规提醒：请先阅读 `LICENSE`、`LICENSE.HOWEVER`、`LICENSE_STATUS.md` 与 `NOTICE.md`，不要把 scoped notice 误解为对全部上游代码的重新授权。
 
 ## Java 全栈作品线分工
 
@@ -99,7 +103,8 @@ mysql -h 127.0.0.1 -uroot -proot-password talentflow_hr < talentflow_hr.sql
 # Backend smoke path
 cd talentflow-platform
 mvn -B -DskipTests package
-mvn -pl talentflow-server/talentflow-web spring-boot:run
+SPRING_FLYWAY_BASELINE_ON_MIGRATE=true mvn -pl talentflow-server/talentflow-web -am install -DskipTests
+SPRING_FLYWAY_BASELINE_ON_MIGRATE=true mvn -f talentflow-server/talentflow-web/pom.xml spring-boot:run
 
 # Frontend smoke path
 cd ../talentflow-ui
@@ -109,6 +114,8 @@ npm run serve
 
 完成以上步骤后，默认可分别在 `8081` 和 Vue 开发端口观察后端与前端本地联调结果。
 
+如果数据库是通过已有 `talentflow_hr.sql` 导入的旧库，首次启动建议保留 `SPRING_FLYWAY_BASELINE_ON_MIGRATE=true`，让 Flyway 为现有 schema 建立 baseline。
+
 3. 最小验证建议：
 
 - 依赖安装成功。
@@ -117,7 +124,11 @@ npm run serve
 
 ### 6.1 演示路径与截图位建议
 
-当前仓库还没有提交真实界面截图，建议优先补齐以下作品集素材：
+当前仓库已补充真实登录页截图，后台多角色页面截图仍待补齐：
+
+![TalentFlow HR login page](docs/showcase/login-page.png)
+
+> 受本地环境影响（前端依赖链与缓存/基础服务配置），后台页面自动化截图链路尚未稳定，已记录为下一轮优先项。
 
 | 场景 | 推荐展示内容 | 说明 |
 |---|---|---|
@@ -133,6 +144,7 @@ npm run serve
 ### 7.1 初始化数据与账号策略
 
 - `talentflow_hr.sql` 已包含示例业务数据，适合本地演示与联调。
+- 本地 demo 登录可先使用 `admin / 123`；公开演示或部署前必须立即重置。
 - 公开演示前建议重置后台管理员口令，并移除历史测试账号或弱口令。
 - 推荐维护单独的 demo 初始化脚本，避免把演示数据和生产基线混在一起。
 
@@ -172,4 +184,4 @@ npm run serve
 
 ## 12. License
 
-请以仓库内现有 License 文件为准。
+请以仓库内现有 `LICENSE`、`LICENSE.HOWEVER`、`LICENSE_STATUS.md` 与 `NOTICE.md` 为准。
