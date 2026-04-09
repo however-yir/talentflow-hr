@@ -5,8 +5,8 @@ services:
     environment:
       MYSQL_DATABASE: talentflow_hr
       MYSQL_USER: talentflow
-      MYSQL_PASSWORD: talentflow-dev-password
-      MYSQL_ROOT_PASSWORD: root-password
+      MYSQL_PASSWORD: ${TF_DB_PASSWORD:-change_me_db_password}
+      MYSQL_ROOT_PASSWORD: ${TF_DB_ROOT_PASSWORD:-change_me_root_password}
     ports:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password

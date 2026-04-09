@@ -2,11 +2,11 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     username: ${TF_DB_USERNAME:talentflow}
-    password: ${TF_DB_PASSWORD:talentflow-dev-password}
+    password: ${TF_DB_PASSWORD:}
     url: ${TF_DB_URL:jdbc:mysql://localhost:3306/talentflow_hr?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai}
   rabbitmq:
     username: ${TF_RABBITMQ_USERNAME:guest}
-    password: ${TF_RABBITMQ_PASSWORD:guest}
+    password: ${TF_RABBITMQ_PASSWORD:}
     host: ${TF_RABBITMQ_HOST:127.0.0.1}
     port: ${TF_RABBITMQ_PORT:5672}
     publisher-confirms: true

@@ -94,22 +94,22 @@ cd talentflow-hr
 2. 安装依赖并启动（按项目类型选择）：
 
 ```bash
-# Start infra dependencies
-docker compose up -d
+cp .env.example .env
+
+# Unified startup helper (doctor + infra-up + next steps)
+./scripts/dev.sh all
 
 # Initialize database schema
-mysql -h 127.0.0.1 -uroot -proot-password talentflow_hr < talentflow_hr.sql
+./scripts/dev.sh db-init
 
-# Backend smoke path
-cd talentflow-platform
-mvn -B -DskipTests package
-SPRING_FLYWAY_BASELINE_ON_MIGRATE=true mvn -pl talentflow-server/talentflow-web -am install -DskipTests
-SPRING_FLYWAY_BASELINE_ON_MIGRATE=true mvn -f talentflow-server/talentflow-web/pom.xml spring-boot:run
+# Terminal 1: backend web
+./scripts/dev.sh backend-web
 
-# Frontend smoke path
-cd ../talentflow-ui
-npm ci
-npm run serve
+# Terminal 2: backend mailserver
+./scripts/dev.sh backend-mail
+
+# Terminal 3: frontend
+./scripts/dev.sh frontend
 ```
 
 完成以上步骤后，默认可分别在 `8081` 和 Vue 开发端口观察后端与前端本地联调结果。
@@ -144,7 +144,7 @@ npm run serve
 ### 7.1 初始化数据与账号策略
 
 - `talentflow_hr.sql` 已包含示例业务数据，适合本地演示与联调。
-- 本地 demo 登录可先使用 `admin / 123`；公开演示或部署前必须立即重置。
+- 示例账号请以导入后的数据库数据为准，首次登录后必须立即修改弱口令。
 - 公开演示前建议重置后台管理员口令，并移除历史测试账号或弱口令。
 - 推荐维护单独的 demo 初始化脚本，避免把演示数据和生产基线混在一起。
 
