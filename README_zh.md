@@ -24,7 +24,7 @@
 TalentFlow HR 是在 `vhr` 基础上进行品牌与工程化重构后的版本，当前重点在于：
 
 - 产品名称统一：`TalentFlow HR`
-- Java 包名统一：`io.liuzhuoran.talentflow`
+- Java 包名统一：`io.howeveryir.talentflow`
 - Maven 坐标统一：`talentflow-*`
 - 后端目录与模块目录统一：`talentflow-*`
 - 前端目录统一：`talentflow-ui`

@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>talentflow-server</artifactId>
-        <groupId>io.liuzhuoran</groupId>
+        <groupId>io.howeveryir</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.liuzhuoran</groupId>
+    <groupId>io.howeveryir</groupId>
     <artifactId>talentflow-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>talentflow-web</name>
@@ -19,7 +19,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>io.liuzhuoran</groupId>
+            <groupId>io.howeveryir</groupId>
             <artifactId>talentflow-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
