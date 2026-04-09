@@ -60,6 +60,20 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void getEmployeeByPageShouldKeepOriginalWhenPageOrSizeMissing() {
+        Employee condition = new Employee();
+        List<Employee> employees = Collections.singletonList(new Employee());
+
+        when(employeeMapper.getEmployeeByPage(null, 20, condition, null)).thenReturn(employees);
+        when(employeeMapper.getTotal(condition, null)).thenReturn(1L);
+
+        RespPageBean result = employeeService.getEmployeeByPage(null, 20, condition, null);
+
+        assertEquals(1L, result.getTotal());
+        assertEquals(employees, result.getData());
+    }
+
+    @Test
     void addEmpShouldComputeContractAndSendMailWhenInsertSucceeds() throws ParseException {
         Employee employee = new Employee();
         employee.setId(100);
@@ -93,6 +107,21 @@ class EmployeeServiceTest {
     }
 
     @Test
+    void addEmpShouldComputeOneAndHalfYearContractTerm() throws ParseException {
+        Employee employee = new Employee();
+        employee.setId(101);
+        employee.setBeginContract(parseDate("2024-01-01"));
+        employee.setEndContract(parseDate("2025-07-01"));
+
+        when(employeeMapper.insertSelective(employee)).thenReturn(0);
+
+        int insertResult = employeeService.addEmp(employee);
+
+        assertEquals(0, insertResult);
+        assertEquals(1.5, employee.getContractTerm(), 0.0001);
+    }
+
+    @Test
     void addEmpShouldNotSendMailWhenInsertFails() throws ParseException {
         Employee employee = new Employee();
         employee.setId(100);
@@ -123,6 +152,16 @@ class EmployeeServiceTest {
 
         assertEquals(8L, result.getTotal());
         assertEquals(employees, result.getData());
+    }
+
+    @Test
+    void updateEmployeeSalaryByIdShouldDelegateToMapper() {
+        when(employeeMapper.updateEmployeeSalaryById(11, 3)).thenReturn(1);
+
+        Integer updated = employeeService.updateEmployeeSalaryById(11, 3);
+
+        assertEquals(1, updated);
+        verify(employeeMapper).updateEmployeeSalaryById(11, 3);
     }
 
     private Date parseDate(String value) throws ParseException {

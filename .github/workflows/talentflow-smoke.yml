@@ -6,11 +6,22 @@ on:
       - master
       - main
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
+
+concurrency:
+  group: talentflow-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      TZ: Asia/Shanghai
 
     steps:
       - name: Checkout
@@ -25,10 +36,22 @@ jobs:
 
       - name: Backend tests
         working-directory: talentflow-platform
-        run: mvn -B -pl talentflow-server/talentflow-web -am test
+        run: mvn -B -ntp -Duser.timezone=Asia/Shanghai -pl talentflow-server/talentflow-web -am test
+
+      - name: Upload backend test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: talentflow-backend-test-reports
+          path: |
+            talentflow-platform/**/target/surefire-reports/*.xml
+            talentflow-platform/**/target/surefire-reports/*.txt
 
   frontend-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: Asia/Shanghai
 
     steps:
       - name: Checkout
@@ -44,5 +67,12 @@ jobs:
       - name: Frontend unit tests
         working-directory: talentflow-ui
         run: |
-          npm ci
-          npm run test:unit
+          npm ci --no-audit --no-fund
+          npm run test:unit:ci
+
+      - name: Upload frontend test result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: talentflow-frontend-test-results
+          path: talentflow-ui/tests/unit/results.json

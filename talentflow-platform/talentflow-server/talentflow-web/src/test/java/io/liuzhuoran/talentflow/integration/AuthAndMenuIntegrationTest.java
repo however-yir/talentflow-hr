@@ -72,11 +72,16 @@ class AuthAndMenuIntegrationTest {
     }
 
     @Test
+    void systemMenuShouldReturnUnauthorizedWhenNotLoggedIn() throws Exception {
+        mockMvc.perform(get("/system/config/menu"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.msg").exists());
+    }
+
+    @Test
     void doLoginShouldSucceedWithMysqlBackedUser() throws Exception {
-        mockMvc.perform(post("/doLogin")
-                        .session(verifyCodeSession())
-                        .contentType(APPLICATION_JSON)
-                        .content("{\"username\":\"admin\",\"password\":\"123\",\"code\":\"abcd\"}"))
+        mockMvc.perform(loginRequest("admin", "123", "abcd"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.msg").value("登录成功!"))
@@ -84,11 +89,24 @@ class AuthAndMenuIntegrationTest {
     }
 
     @Test
+    void doLoginShouldFailWhenVerifyCodeIncorrect() throws Exception {
+        mockMvc.perform(loginRequest("admin", "123", "wrong-code"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.msg").value("验证码不正确"));
+    }
+
+    @Test
+    void doLoginShouldFailWhenPasswordIncorrect() throws Exception {
+        mockMvc.perform(loginRequest("admin", "wrong-pass", "abcd"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.msg").value("用户名或者密码输入错误，请重新输入!"));
+    }
+
+    @Test
     void systemMenuEndpointShouldReturnMenuAfterLoginAndPopulateRedisCache() throws Exception {
-        MvcResult loginResult = mockMvc.perform(post("/doLogin")
-                        .session(verifyCodeSession())
-                        .contentType(APPLICATION_JSON)
-                        .content("{\"username\":\"admin\",\"password\":\"123\",\"code\":\"abcd\"}"))
+        MvcResult loginResult = mockMvc.perform(loginRequest("admin", "123", "abcd"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -97,6 +115,11 @@ class AuthAndMenuIntegrationTest {
         mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].children").isArray());
+
+        mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").exists());
 
         assertThat(jdbcTemplate.queryForObject("select count(*) from hr", Integer.class)).isGreaterThan(0);
@@ -104,6 +127,17 @@ class AuthAndMenuIntegrationTest {
         Set<String> cacheKeys = stringRedisTemplate.keys("menus_cache*");
         assertThat(cacheKeys).isNotNull();
         assertThat(cacheKeys).isNotEmpty();
+    }
+
+    private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder loginRequest(
+            String username,
+            String password,
+            String code
+    ) {
+        return post("/doLogin")
+                .session(verifyCodeSession())
+                .contentType(APPLICATION_JSON)
+                .content(String.format("{\"username\":\"%s\",\"password\":\"%s\",\"code\":\"%s\"}", username, password, code));
     }
 
     private MockHttpSession verifyCodeSession() {

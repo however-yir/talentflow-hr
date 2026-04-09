@@ -70,6 +70,15 @@ class MenuServiceTest {
     }
 
     @Test
+    void updateMenuRoleShouldReturnTrueWhenMidListIsEmpty() {
+        boolean updated = menuService.updateMenuRole(6, new Integer[0]);
+
+        assertTrue(updated);
+        verify(menuRoleMapper).deleteByRid(6);
+        verify(menuRoleMapper, never()).insertRecord(org.mockito.ArgumentMatchers.anyInt(), org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
     void updateMenuRoleShouldReturnTrueWhenInsertCountMatches() {
         Integer[] mids = new Integer[]{7, 8};
         when(menuRoleMapper.insertRecord(6, mids)).thenReturn(2);

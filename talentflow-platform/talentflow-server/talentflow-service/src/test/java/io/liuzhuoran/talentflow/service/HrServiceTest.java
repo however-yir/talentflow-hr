@@ -80,6 +80,16 @@ class HrServiceTest {
     }
 
     @Test
+    void updateHrRoleShouldReturnFalseWhenInsertedCountNotMatch() {
+        Integer[] rids = new Integer[]{1, 2, 3};
+        when(hrRoleMapper.addRole(8, rids)).thenReturn(2);
+
+        boolean updated = hrService.updateHrRole(8, rids);
+
+        assertFalse(updated);
+    }
+
+    @Test
     void updateHrPasswdShouldReturnTrueWhenOldPasswordMatches() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Hr hr = new Hr();
@@ -110,5 +120,20 @@ class HrServiceTest {
 
         assertFalse(updated);
         verify(hrMapper, never()).updatePasswd(eq(5), anyString());
+    }
+
+    @Test
+    void updateHrPasswdShouldReturnFalseWhenUpdateCountNotOne() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Hr hr = new Hr();
+        hr.setId(5);
+        hr.setPassword(encoder.encode("old-pass"));
+
+        when(hrMapper.selectByPrimaryKey(5)).thenReturn(hr);
+        when(hrMapper.updatePasswd(eq(5), anyString())).thenReturn(0);
+
+        boolean updated = hrService.updateHrPasswd("old-pass", "new-pass", 5);
+
+        assertFalse(updated);
     }
 }
