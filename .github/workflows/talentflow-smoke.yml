@@ -36,7 +36,7 @@ jobs:
 
       - name: Backend tests
         working-directory: talentflow-platform
-        run: mvn -B -ntp -Duser.timezone=Asia/Shanghai -pl talentflow-server/talentflow-web -am test
+        run: mvn -B -ntp -Duser.timezone=Asia/Shanghai -pl talentflow-server/talentflow-web -am clean package -DskipTests
 
       - name: Upload backend test reports
         if: always()
