@@ -38,8 +38,8 @@
                 loading: false,
                 vcUrl: '/verifyCode?time='+new Date(),
                 loginForm: {
-                    username: 'admin',
-                    password: '123',
+                    username: '',
+                    password: '',
                     code:''
                 },
                 checked: true,

@@ -24,7 +24,7 @@
 
 - 定位：Java 全栈人力资源管理平台。
 - 亮点：组织与流程场景、前后端分离、数据库初始化资源、范围受限的正式 LICENSE、后续可继续做 CI 与截图展示。
-- 最短运行路径：`cd talentflow-platform && mvn -B -DskipTests package`
+- 最短运行路径：`cd talentflow-platform && mvn -B clean verify`
 - 合规提醒：请先阅读 `LICENSE`、`LICENSE.HOWEVER`、`LICENSE_STATUS.md` 与 `NOTICE.md`，不要把 scoped notice 误解为对全部上游代码的重新授权。
 
 ## Java 全栈作品线分工
@@ -162,7 +162,7 @@ cp .env.example .env
 建议把以下链路作为最小 showcase 验收：
 
 1. `docker compose up -d` 后依赖服务全部可用。
-2. 后端 `mvn -B -DskipTests package` 成功。
+2. 后端 `mvn -B clean verify` 成功。
 3. 前端 `npm ci && npm run serve` 成功。
 4. 至少补齐 4 张界面截图与 1 段流程录屏。
 
