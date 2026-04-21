@@ -124,11 +124,16 @@ class AuthAndMenuIntegrationTest {
         assertThat(securityContext).as("security context after successful login").isNotNull();
         assertThat(securityContext.getAuthentication()).as("authenticated principal after successful login").isNotNull();
 
-        mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].name").exists())
-                .andExpect(jsonPath("$[0].children").isArray());
+        try {
+            mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$[0].name").exists())
+                    .andExpect(jsonPath("$[0].children").isArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
 
         mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
                 .andExpect(status().isOk())
