@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -114,7 +116,15 @@ class AuthAndMenuIntegrationTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andReturn();
 
-        Authentication authenticatedUser = (Authentication) loginResult.getRequest().getUserPrincipal();
+        MockHttpSession authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
+        if (authenticatedSession == null) {
+            authenticatedSession = verifyCodeSession;
+        }
+        SecurityContext securityContext = (SecurityContext) authenticatedSession.getAttribute(
+                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY
+        );
+        assertThat(securityContext).as("security context after successful login").isNotNull();
+        Authentication authenticatedUser = securityContext.getAuthentication();
         assertThat(authenticatedUser).as("authenticated principal after successful login").isNotNull();
 
         mockMvc.perform(get("/system/config/menu").with(authentication(authenticatedUser)))
