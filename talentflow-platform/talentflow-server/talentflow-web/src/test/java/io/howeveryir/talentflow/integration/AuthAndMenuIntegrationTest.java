@@ -106,19 +106,19 @@ class AuthAndMenuIntegrationTest {
 
     @Test
     void systemMenuEndpointShouldReturnMenuAfterLoginAndPopulateRedisCache() throws Exception {
-        MvcResult loginResult = mockMvc.perform(loginRequest("admin", "123", "abcd"))
+        MockHttpSession loginSession = verifyCodeSession();
+        MvcResult loginResult = mockMvc.perform(loginRequest("admin", "123", "abcd", loginSession))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
                 .andReturn();
 
-        MockHttpSession authenticatedSession = (MockHttpSession) loginResult.getRequest().getSession(false);
-
-        mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
+        mockMvc.perform(get("/system/config/menu").session(loginSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].children").isArray());
 
-        mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
+        mockMvc.perform(get("/system/config/menu").session(loginSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").exists());
 
@@ -134,8 +134,17 @@ class AuthAndMenuIntegrationTest {
             String password,
             String code
     ) {
+        return loginRequest(username, password, code, verifyCodeSession());
+    }
+
+    private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder loginRequest(
+            String username,
+            String password,
+            String code,
+            MockHttpSession session
+    ) {
         return post("/doLogin")
-                .session(verifyCodeSession())
+                .session(session)
                 .contentType(APPLICATION_JSON)
                 .content(String.format("{\"username\":\"%s\",\"password\":\"%s\",\"code\":\"%s\"}", username, password, code));
     }
