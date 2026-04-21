@@ -36,7 +36,7 @@ class AuthAndMenuIntegrationTest {
     @Container
     private static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36")
             .withDatabaseName("talentflow_hr")
-            .withUsername("talentflow")
+            .withUsername("root")
             .withPassword("talentflow");
 
     @Container
