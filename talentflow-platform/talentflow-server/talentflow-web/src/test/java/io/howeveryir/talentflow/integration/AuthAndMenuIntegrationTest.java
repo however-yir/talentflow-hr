@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -106,19 +108,22 @@ class AuthAndMenuIntegrationTest {
 
     @Test
     void systemMenuEndpointShouldReturnMenuAfterLoginAndPopulateRedisCache() throws Exception {
-        MockHttpSession loginSession = verifyCodeSession();
-        MvcResult loginResult = mockMvc.perform(loginRequest("admin", "123", "abcd", loginSession))
+        MockHttpSession verifyCodeSession = verifyCodeSession();
+        MvcResult loginResult = mockMvc.perform(loginRequest("admin", "123", "abcd", verifyCodeSession))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andReturn();
 
-        mockMvc.perform(get("/system/config/menu").session(loginSession))
+        Authentication authenticatedUser = (Authentication) loginResult.getRequest().getUserPrincipal();
+        assertThat(authenticatedUser).as("authenticated principal after successful login").isNotNull();
+
+        mockMvc.perform(get("/system/config/menu").with(authentication(authenticatedUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").exists())
                 .andExpect(jsonPath("$[0].children").isArray());
 
-        mockMvc.perform(get("/system/config/menu").session(loginSession))
+        mockMvc.perform(get("/system/config/menu").with(authentication(authenticatedUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").exists());
 
