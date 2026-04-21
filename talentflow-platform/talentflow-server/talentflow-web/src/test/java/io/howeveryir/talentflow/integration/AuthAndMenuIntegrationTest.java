@@ -50,6 +50,8 @@ class AuthAndMenuIntegrationTest {
         registry.add("spring.datasource.url", AuthAndMenuIntegrationTest::jdbcUrl);
         registry.add("spring.datasource.username", MYSQL::getUsername);
         registry.add("spring.datasource.password", MYSQL::getPassword);
+        registry.add("spring.datasource.druid.web-stat-filter.enabled", () -> "false");
+        registry.add("spring.datasource.druid.stat-view-servlet.enabled", () -> "false");
         registry.add("spring.redis.host", REDIS::getHost);
         registry.add("spring.redis.port", () -> REDIS.getMappedPort(6379));
         registry.add("spring.task.scheduling.enabled", () -> "false");
@@ -124,16 +126,11 @@ class AuthAndMenuIntegrationTest {
         assertThat(securityContext).as("security context after successful login").isNotNull();
         assertThat(securityContext.getAuthentication()).as("authenticated principal after successful login").isNotNull();
 
-        try {
-            mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$[0].name").exists())
-                    .andExpect(jsonPath("$[0].children").isArray());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
+        mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].children").isArray());
 
         mockMvc.perform(get("/system/config/menu").session(authenticatedSession))
                 .andExpect(status().isOk())
